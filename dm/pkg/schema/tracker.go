@@ -502,14 +502,15 @@ func (dt *downstreamTracker) getTableInfoByCreateStmt(tctx *tcontext.Context, ta
 
 // initDownStreamTrackerParser init downstream tracker parser by default sql_mode.
 func (dt *downstreamTracker) initDownStreamSQLModeAndParser(tctx *tcontext.Context) error {
-	setSQLMode := fmt.Sprintf("SET SESSION SQL_MODE = '%s'", mysql.DefaultSQLMode)
+	const DefaultSQLModeMySQL80 = "ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"
+	setSQLMode := fmt.Sprintf("SET SESSION SQL_MODE = '%s'", DefaultSQLModeMySQL80)
 	_, err := dt.downstreamConn.ExecuteSQL(tctx, nil, []string{setSQLMode})
 	if err != nil {
-		return dmterror.ErrSchemaTrackerCannotSetDownstreamSQLMode.Delegate(err, mysql.DefaultSQLMode)
+		return dmterror.ErrSchemaTrackerCannotSetDownstreamSQLMode.Delegate(err, DefaultSQLModeMySQL80)
 	}
-	stmtParser, err := conn.GetParserFromSQLModeStr(mysql.DefaultSQLMode)
+	stmtParser, err := conn.GetParserFromSQLModeStr(DefaultSQLModeMySQL80)
 	if err != nil {
-		return dmterror.ErrSchemaTrackerCannotInitDownstreamParser.Delegate(err, mysql.DefaultSQLMode)
+		return dmterror.ErrSchemaTrackerCannotInitDownstreamParser.Delegate(err, DefaultSQLModeMySQL80)
 	}
 	dt.stmtParser = stmtParser
 	return nil
