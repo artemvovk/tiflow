@@ -90,6 +90,9 @@ type DDLWorker struct {
 
 // NewDDLWorker creates a new DDLWorker instance.
 func NewDDLWorker(pLogger *log.Logger, syncer *Syncer) *DDLWorker {
+	tidbconfig.UpdateGlobal(func(conf *tidbconfig.Config) {
+		conf.Experimental.AllowsExpressionIndex = true
+	})
 	ddlWorker := &DDLWorker{
 		logger:                     pLogger.WithFields(zap.String("component", "ddl")),
 		binlogFilter:               syncer.binlogFilter,
