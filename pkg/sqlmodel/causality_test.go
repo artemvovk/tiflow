@@ -205,6 +205,18 @@ func TestGetCausalityString(t *testing.T) {
 			values: []interface{}{17, nil},
 			keys:   []string{"17.a.db.tbl"},
 		},
+		{
+			// function index
+			schema: `
+				create table t9(
+					a int, b int default null, c int default null,
+					primary key(a),
+					unique key(b, (coalesce(c, 0)))
+				)
+			`,
+			values: []interface{}{17, 18, 19},
+			keys:   []string{"18.b.19.c.db.tbl", "17.a.db.tbl"},
+		},
 	}
 
 	for _, ca := range testCases {

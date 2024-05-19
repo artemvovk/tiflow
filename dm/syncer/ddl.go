@@ -21,6 +21,7 @@ import (
 	"github.com/go-mysql-org/go-mysql/replication"
 	"github.com/pingcap/failpoint"
 	bf "github.com/pingcap/tidb-tools/pkg/binlog-filter"
+	tidbconfig "github.com/pingcap/tidb/config"
 	tidbddl "github.com/pingcap/tidb/ddl"
 	"github.com/pingcap/tidb/parser"
 	"github.com/pingcap/tidb/parser/ast"
@@ -91,6 +92,10 @@ type DDLWorker struct {
 
 // NewDDLWorker creates a new DDLWorker instance.
 func NewDDLWorker(pLogger *log.Logger, syncer *Syncer) *DDLWorker {
+	tidbconfig.UpdateGlobal(func(conf *tidbconfig.Config) {
+		conf.Experimental.AllowsExpressionIndex = true
+	})
+
 	ddlWorker := &DDLWorker{
 		logger:                     pLogger.WithFields(zap.String("component", "ddl")),
 		binlogFilter:               syncer.binlogFilter,

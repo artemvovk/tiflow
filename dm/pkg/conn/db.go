@@ -33,7 +33,7 @@ import (
 	tmysql "github.com/pingcap/tidb/parser/mysql"
 	"github.com/pingcap/tidb/util/dbutil"
 	"github.com/pingcap/tidb/util/filter"
-	"github.com/pingcap/tidb/util/regexpr-router"
+	regexprrouter "github.com/pingcap/tidb/util/regexpr-router"
 	tcontext "github.com/pingcap/tiflow/dm/pkg/context"
 	"github.com/pingcap/tiflow/dm/pkg/log"
 	"github.com/pingcap/tiflow/dm/pkg/terror"
@@ -363,7 +363,6 @@ func AdjustSQLModeCompatible(sqlModes string) (string, error) {
 		"NO_ZERO_IN_DATE",
 		"NO_ZERO_DATE",
 		"ERROR_FOR_DIVISION_BY_ZERO",
-		"NO_AUTO_CREATE_USER",
 		"STRICT_TRANS_TABLES",
 		"STRICT_ALL_TABLES",
 	}

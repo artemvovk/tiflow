@@ -16,6 +16,7 @@ package sqlmodel
 import (
 	"testing"
 
+	tidbconfig "github.com/pingcap/tidb/config"
 	"github.com/pingcap/tidb/ddl"
 	"github.com/pingcap/tidb/parser"
 	"github.com/pingcap/tidb/parser/ast"
@@ -30,6 +31,9 @@ import (
 )
 
 func mockTableInfo(t *testing.T, sql string) *timodel.TableInfo {
+	tidbconfig.UpdateGlobal(func(conf *tidbconfig.Config) {
+		conf.Experimental.AllowsExpressionIndex = true
+	})
 	p := parser.New()
 	se := timock.NewContext()
 	node, err := p.ParseOneStmt(sql, "", "")

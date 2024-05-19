@@ -83,12 +83,29 @@ func rewriteColsOffset(index *model.IndexInfo, source *model.TableInfo) *model.I
 		if sourceColumn == nil {
 			return nil
 		}
-		column := &model.IndexColumn{
-			Name:   key.Name,
-			Offset: sourceColumn.Offset,
-			Length: key.Length,
+		if !sourceColumn.Hidden {
+			column := &model.IndexColumn{
+				Name:   key.Name,
+				Offset: sourceColumn.Offset,
+				Length: key.Length,
+			}
+			columns = append(columns, column)
+
+		} else if len(sourceColumn.Dependences) > 0 {
+			// The column is generated column, we need to find the real column
+			// that the generated column depends on.
+			for dep := range sourceColumn.Dependences {
+				depColumn := model.FindColumnInfo(source.Columns, dep)
+				if depColumn != nil {
+					column := &model.IndexColumn{
+						Name:   key.Name,
+						Offset: depColumn.Offset,
+						Length: key.Length,
+					}
+					columns = append(columns, column)
+				}
+			}
 		}
-		columns = append(columns, column)
 	}
 	clone := *index
 	clone.Columns = columns
